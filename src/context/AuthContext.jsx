@@ -52,9 +52,22 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
+      let errorMessage = 'Login failed';
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        // Request made but no response
+        errorMessage = 'Cannot connect to server. Please make sure the backend is running.';
+      } else {
+        // Something else happened
+        errorMessage = error.message || 'An unexpected error occurred';
+      }
+      
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Login failed' 
+        message: errorMessage
       };
     }
   };
